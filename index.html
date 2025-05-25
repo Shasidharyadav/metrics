@@ -1,1 +1,214 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dashboard Metrics Visualization</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap');
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    margin: 0;
+    padding: 2rem 1rem 3rem;
+    color: #fff;
+    min-height: 100vh;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-weight: 700;
+    font-size: 2.5rem;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  }
+  .charts-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+  }
+  .chart-card {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .chart-card h2 {
+    margin: 0 0 1rem 0;
+    color: #ffec99;
+    font-weight: 700;
+    font-size: 1.4rem;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  canvas {
+    max-width: 100%;
+    height: auto !important;
+  }
+  .info-section {
+    margin-top: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  .info-section h3 {
+    margin: 0 0 1rem 0;
+    color: #ffec99;
+    font-weight: 700;
+  }
+  .info-section p {
+    margin: 0.5rem 0;
+  }
+  .questions {
+    margin-top: 1.5rem;
+    list-style-type: decimal;
+    padding-left: 1.5rem;
+  }
+  @media (max-width: 850px) {
+    .charts-container {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+  <h1>Dashboard Metrics Visualization</h1>
+  <div class="charts-container">
+
+    <div class="chart-card">
+      <h2>Health Deprived (%)</h2>
+      <canvas id="healthPieChart"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h2>Education Deprived (%)</h2>
+      <canvas id="educationDonutChart"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h2>Standard of Living Deprived (%)</h2>
+      <canvas id="livingDonutChart"></canvas>
+    </div>
+
+  </div>
+
+  <div class="info-section">
+    <h3>Metrics Overview</h3>
+    <p>The metrics visualized in this dashboard provide insights into the health, education, and standard of living of families in various districts. Understanding these metrics is crucial for identifying areas that require intervention and support.</p>
+    
+    <h3>Key Questions to Consider:</h3>
+    <ol class="questions">
+      <li>The fund flow and average money donated to each family and their disparities.</li>
+      <li>The population of SC/ST/Other marginalized populations and their MPI index in each parameter as per district.</li>
+      <li>No. of SHGs enabled and woman-impacted.</li>
+      <li>Tracking of the funds from Donor to Beneficiary for each donor in the Margadarsi Dashboard.</li>
+      <li>A clear Dashboard for specific kinds of mentorship needed by each family member & a Tech tool that enables the same.</li>
+      <li>No. of migrant families & total population in each district & percentage of existing schemes penetration and need for the family.</li>
+      <li>MPI Indicators in Urban & Rural.</li>
+      <li>MPI indicators from Uncensored & censored data (Total Population & Multidimensional deprived population).</li>
+      <li>How much funds came from NRI and how much came from Indian residents.</li>
+      <li>How many institutional partnerships have been made in each district which includes CSR, HNI, NRI & Grants.</li>
+      <li>Tracking from Promise to conversion.</li>
+      <li>No. of families deprived and no. of families adopted based on the occupation like agricultural, artisans and craft, fisher work, forest dwellers, miners, health workers, teachers, construction/domestic/factory/shepherd/cattle workers, drivers.</li>
+      <li>The average rise of per capita income of each Bangaru Kutumbam.</li>
+    </ol>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Data for Health Deprived (%)
+  const healthData = {
+    labels: ['Nutrition', 'Child & Adolescent Mortality', 'Maternal Health'],
+    datasets: [{
+      data: [40, 35, 25], // Placeholder data
+      backgroundColor: ['#ff6384', '#36a2eb', '#ffce56'],
+      hoverOffset: 4
+    }]
+  };
+
+  // Data for Education Deprived (%)
+  const educationData = {
+    labels: ['Years of Schooling', 'School Attendance', 'Innovations/Enterprises'],
+    datasets: [{
+      data: [50, 30, 20], // Placeholder data
+      backgroundColor: ['#ff6384', '#36a2eb', '#ffce56'],
+      hoverOffset: 4
+    }]
+  };
+
+  // Data for Standard of Living Deprived (%)
+  const livingData = {
+    labels: ['Cooking Fuel', 'Sanitation', 'Drinking Water', 'Electricity', 'Housing', 'Assets', 'Bank Account', '% Families Benefiting', 'Donations'],
+    datasets: [{
+      data: [15, 20, 10, 25, 5, 10, 5, 5, 5], // Placeholder data
+      backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff', '#ff9f40', '#ff6384', '#36a2eb', '#ffce56'],
+      hoverOffset: 4
+    }]
+  };
+
+  // Create Pie Chart for Health Deprived (%)
+  const healthPieCtx = document.getElementById('healthPieChart').getContext('2d');
+  const healthPieChart = new Chart(healthPieCtx, {
+    type: 'pie',
+    data: healthData,
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: true,
+          text: 'Health Deprived Breakdown'
+        }
+      }
+    }
+  });
+
+  // Create Donut Chart for Education Deprived (%)
+  const educationDonutCtx = document.getElementById('educationDonutChart').getContext('2d');
+  const educationDonutChart = new Chart(educationDonutCtx, {
+    type: 'doughnut',
+    data: educationData,
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: true,
+          text: 'Education Deprived Breakdown'
+        }
+      }
+    }
+  });
+
+  // Create Donut Chart for Standard of Living Deprived (%)
+  const livingDonutCtx = document.getElementById('livingDonutChart').getContext('2d');
+  const livingDonutChart = new Chart(livingDonutCtx, {
+    type: 'doughnut',
+    data: livingData,
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: true,
+          text: 'Standard of Living Deprived Breakdown'
+        }
+      }
+    }
+  });
+
+</script>
+</body>
+</html>
